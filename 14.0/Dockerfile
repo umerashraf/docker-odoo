@@ -30,11 +30,23 @@ RUN apt-get update && \
         python3-watchdog \
         python3-xlrd \
         python3-xlwt \
+        build-essential \
+        libffi-dev \
+        python3-setuptools\
         xz-utils \
     && curl -o wkhtmltox.deb -sSL https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.buster_amd64.deb \
     && echo 'ea8277df4297afc507c61122f3c349af142f31e5 wkhtmltox.deb' | sha1sum -c - \
     && apt-get install -y --no-install-recommends ./wkhtmltox.deb \
     && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
+
+# Install additional packages
+RUN set -x; \
+        pip3 install wheel \
+        && pip3 install eyed3 \
+        && pip3 install html2text \
+        && pip3 install nano \
+        && pip3 install cryptography \
+        && pip3 install firebase_admin 
 
 # install latest postgresql-client
 RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main' > /etc/apt/sources.list.d/pgdg.list \
@@ -54,8 +66,8 @@ RUN echo 'deb http://apt.postgresql.org/pub/repos/apt/ bullseye-pgdg main' > /et
 RUN npm install -g rtlcss
 
 # Install Odoo
-ENV ODOO_VERSION 15.0
-ARG ODOO_RELEASE=20240229
+ENV ODOO_VERSION 14.0
+ARG ODOO_RELEASE=latest
 ARG ODOO_SHA=f99974a7dfc4862e348ef87e15766efcd2b777e2
 RUN curl -o odoo.deb -sSL http://nightly.odoo.com/${ODOO_VERSION}/nightly/deb/odoo_${ODOO_VERSION}.${ODOO_RELEASE}_all.deb \
     && echo "${ODOO_SHA} odoo.deb" | sha1sum -c - \
